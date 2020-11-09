@@ -1,5 +1,5 @@
-import React from "react";
-import { Image } from "react-native";
+import React from 'react';
+import { Image } from 'react-native';
 import {
   Container,
   Content,
@@ -10,27 +10,29 @@ import {
   CardItem,
   Left,
   Right,
-  Body
-} from "native-base";
-const routes = ["Stages", "Bodas", "Account"];
+  Body,
+} from 'native-base';
+import { View } from 'react-native';
+const routes = ['Stages', 'Bodas', 'Account'];
 export default class SideBar extends React.Component {
   render() {
     return (
       <Container>
-        <Content>
+        <View>
           <Card>
             <CardItem>
               <Body>
-                <Image source={require("../assets/icon.png")} />
+                <Image source={require('../assets/icon.png')} />
               </Body>
             </CardItem>
           </Card>
 
           <List
             dataArray={routes}
-            renderRow={data => {
+            renderRow={(data) => {
               return (
                 <ListItem
+                  key={`${Math.random() * 9}`}
                   button
                   onPress={() => this.props.navigation.navigate(data)}
                 >
@@ -39,7 +41,7 @@ export default class SideBar extends React.Component {
               );
             }}
           />
-        </Content>
+        </View>
       </Container>
     );
   }

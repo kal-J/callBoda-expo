@@ -19,7 +19,7 @@ const Stage = props => {
     >
       <Card>
         <CardItem>
-          <Text style={{color: colors.primary,fontWeight: 'bold'}}>{props.name}</Text>
+          <Text style={{color: colors.light,fontWeight: 'bold'}}>{props.name}</Text>
         </CardItem>
       </Card>
     </TouchableOpacity>
