@@ -23,120 +23,138 @@ const Bodas = (props) => {
   const stage = props.navigation.getParam('stage') || 'No stage selected';
   const bodas = props.navigation.getParam('bodas');
   return (
-    <Container>
-      <NavHeader navigation={props.navigation} title={stage} />
-      <View
-        style={{
-          flex: 1,
-          padding: wp(2),
-        }}
-      >
-        <View>
-          <Text>All Bodas</Text>
-        </View>
-        <View style={{ flex: 1, paddingBottom: hp(15) }}>
-          {bodas ? (
-            <FlatList
-              data={bodas}
-              renderItem={({ item }) => {
-                const boda = item;
-                return (
-                  <Card key={`'yuuu'-${Math.random() * 9}`} style={{ paddingVertical: 15 }}>
-                    <CardItem>
-                      <View>
-                        <View style={styles.place_center}>
-                          <Text
-                            style={{
-                              fontWeight: 'bold',
-                              fontSize: 20,
-                              paddingVertical: 5,
-                            }}
-                          >
-                            {boda.name}
-                          </Text>
-                        </View>
-                        <View style={styles.place_center}>
-                          <Image
-                            style={{
-                              width: 150,
-                              height: 150,
-                              borderRadius: 75,
-                            }}
-                            source={{ uri: boda.profile_picture_url }}
-                          />
-                        </View>
-                        <View style={styles.place_center}>
-                          <FiveStarRating rating={boda.rating} />
-                        </View>
-                        <View
-                          style={[
-                            styles.place_center,
-                            {
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              marginHorizontal: 40,
-                            },
-                          ]}
-                        >
-                          <Button color={colors.primary} title="rate" />
-                          <TouchableOpacity onPress={() => {}}>
-                            <Icon
-                              name="alert"
-                              style={{ color: colors.primary }}
+    <>
+      <View style={{ flex: 1 }}>
+        <NavHeader navigation={props.navigation} title={stage} />
+        <View
+          style={{
+            flex: 1,
+            marginHorizontal: wp(5),
+          }}
+        >
+          <View>
+            <Text>All Bodas</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            {bodas ? (
+              <FlatList
+                data={bodas}
+                renderItem={({ item }) => {
+                  const boda = item;
+                  return (
+                    <Card
+                      key={`'yuuu'-${Math.random() * 9}`}
+                      style={{ paddingVertical: 15 }}
+                    >
+                      <CardItem>
+                        <View>
+                          <View style={styles.place_center}>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                fontSize: 20,
+                                paddingVertical: 5,
+                              }}
+                            >
+                              {boda.name}
+                            </Text>
+                          </View>
+                          <View style={styles.place_center}>
+                            <Image
+                              style={{
+                                width: 150,
+                                height: 150,
+                                borderRadius: 75,
+                              }}
+                              source={{ uri: boda.profile_picture_url }}
                             />
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() =>
-                              call({ number: boda.tel, prompt: true }).catch(
-                                console.error
-                              )
-                            }
+                          </View>
+                          <View style={styles.place_center}>
+                            <FiveStarRating rating={boda.rating} />
+                          </View>
+                          <View
+                            style={[
+                              styles.place_center,
+                              {
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                marginHorizontal: 40,
+                              },
+                            ]}
                           >
-                            <Icon
-                              name="call"
-                              style={{ color: colors.primary }}
-                            />
-                          </TouchableOpacity>
+                            <Button color={colors.primary} title="rate" />
+                            <TouchableOpacity onPress={() => {}}>
+                              <Icon
+                                name="alert"
+                                style={{ color: colors.primary }}
+                              />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() =>
+                                call({ number: boda.tel, prompt: true }).catch(
+                                  console.error
+                                )
+                              }
+                            >
+                              <Icon
+                                name="call"
+                                style={{ color: colors.primary }}
+                              />
+                            </TouchableOpacity>
+                          </View>
                         </View>
-                      </View>
-                    </CardItem>
-                  </Card>
-                );
-              }}
-            />
-          ) : (
-            Alert.alert('No stage selected, first select a stage')
-          )}
+                      </CardItem>
+                    </Card>
+                  );
+                }}
+              />
+            ) : (
+              Alert.alert('No stage selected, first select a stage')
+            )}
+          </View>
         </View>
       </View>
+
       <View
         style={{
-          position: 'absolute',
-          right: wp(4),
-          bottom: hp(2),
+          paddingVertical: hp(2),
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          elevation: 5,
         }}
       >
         <TouchableOpacity
           style={{
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: colors.light,
-            paddingVertical: hp(2),
-            paddingHorizontal: wp(4),
-            borderRadius: hp(2),
-            elevation: 10,
+            backgroundColor: colors.primary,
+            width: wp(14),
+            height: wp(14),
+            borderRadius: wp(7),
+            elevation: 5,
           }}
           onPress={() => {
-            props.navigation.navigate('AddStage');
+            Alert.alert(
+              null,
+              "Click 'New Boda' to create and save a new Boda",
+              [
+                {
+                  text: 'New Boda',
+                  onPress: () => {
+                    props.navigation.navigate('AddBoda');
+                  },
+                },
+                null,
+              ],
+              { cancelable: true }
+            );
           }}
         >
           <Text style={{ color: '#fff', fontWeight: 'bold' }}>+</Text>
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-            ADD NEW BODA
-          </Text>
         </TouchableOpacity>
       </View>
-    </Container>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -12,43 +12,62 @@ import {
   Button,
   Form,
   Label,
+  Textarea,
 } from 'native-base';
 import NavHeader from '../components/NavHeader';
 import Stage from '../components/Stage';
 import { View, FlatList } from 'react-native';
 import colors from '../layouts/colors';
 import { Text } from 'react-native';
+import Select from '../components/Select';
+import { ScrollView } from 'react-native';
+
+const locations = [{ name: 'Lira University' }];
 
 const AddStage = (props) => {
+  const [location, setLocation] = useState('Lira University');
+
   return (
-    <Container>
-      <NavHeader navigation={props.navigation} title="ADD STAGE" />
-      <View style={{ flex: 1, paddingHorizontal: wp(10) }}>
-        <Form>
-          <Item floatingLabel>
-            <Label>Stage Name</Label>
-            <Input />
-          </Item>
-          <Item floatingLabel>
-            <Label>Location</Label>
-            <Input />
-          </Item>
-        </Form>
-      </View>
+    <View style={{ flex: 1 }}>
+      <NavHeader navigation={props.navigation} title="STAGE DETAILS" />
+      <ScrollView style={{ flex: 1 }}>
+        <View style={{ flex: 1, paddingHorizontal: wp(10) }}>
+          <Form>
+            <Item floatingLabel>
+              <Label>What's the name of the stage</Label>
+              <Input />
+            </Item>
+          </Form>
+        </View>
+        <View
+          style={{ flex: 1, marginHorizontal: wp(10), marginVertical: hp(2) }}
+        >
+          <Label>Select location of this stage</Label>
+          <Select
+            selectedValue={location}
+            setSelectedValue={setLocation}
+            items={locations}
+          />
+        </View>
+        <View style={{ flex: 1, paddingHorizontal: wp(10) }}>
+          <Label>Short Description (optional)</Label>
+          <Textarea rowSpan={5} bordered placeholder="About this stage" />
+        </View>
+      </ScrollView>
 
       <View
         style={{
-          position: 'absolute',
-          right: wp(10),
-          left: wp(10),
-          bottom: hp(5),
+          justifyContent: 'flex-end',
+          marginHorizontal: wp(10),
+          marginVertical: hp(5),
+          backgroundColor: '#000'
         }}
       >
         <Button full style={{ backgroundColor: colors.primary }}>
-          <Text style={{ color: '#fff' }}>SUBMIT</Text>
+          <Text style={{ color: '#fff' }}>SAVE STAGE</Text>
         </Button>
       </View>
-    </Container>
+    </View>
   );
 };
 

@@ -22,7 +22,7 @@ const FiveStarRating = ({rating}) => {
 
 const styles = StyleSheet.create({
   active_star: {
-    color: colors.light
+    color: colors.primary
   },
   inactive_star: {
     color: "grey",

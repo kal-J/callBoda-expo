@@ -4,6 +4,7 @@ import { View, ActivityIndicator } from 'react-native';
 import Router from './screens/Router';
 import GeneralStatusBar from './components/GeneralStatusBar';
 import colors from './layouts/colors';
+import { StoreProvider } from './context';
 
 const App = () => {
   const [isReady, setIsReady] = useState(false);
@@ -17,12 +18,14 @@ const App = () => {
   });
 
   return (
-    <View style={{flex: 1}}>
-      <GeneralStatusBar backgroundColor={colors.primary} />
+    <StoreProvider>
       <View style={{ flex: 1 }}>
-        {isReady ? <Router /> : <ActivityIndicator />}
+        <GeneralStatusBar backgroundColor={colors.primary} />
+        <View style={{ flex: 1 }}>
+          {isReady ? <Router /> : <ActivityIndicator />}
+        </View>
       </View>
-    </View>
+    </StoreProvider>
   );
 };
 

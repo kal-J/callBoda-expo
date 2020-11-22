@@ -2,7 +2,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import SideBar from '../components/SideBar';
-import Stages from './Stages';
+import Home from './Home';
 import Account from './Account';
 import Bodas from './Bodas';
 import AddStage from './AddStage';
@@ -10,7 +10,7 @@ import AddBoda from './AddBoda';
 
 const HomeScreenRouter = createDrawerNavigator(
   {
-    Stages: { screen: Stages },
+    Home: { screen: Home },
     Bodas: { screen: Bodas },
     Account: { screen: Account },
     AddStage: { screen: AddStage },
@@ -18,7 +18,7 @@ const HomeScreenRouter = createDrawerNavigator(
   },
   {
     contentComponent: (props) => <SideBar {...props} />,
-    initialRouteName: 'Stages',
+    initialRouteName: 'Home',
   }
 );
 
