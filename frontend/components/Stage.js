@@ -20,11 +20,15 @@ const Stage = (props) => {
     >
       <Card>
         <CardItem>
-          <Text style={{ color: colors.light, fontWeight: 'bold' }}>
-            {props.name}
-          </Text>
+          <Text style={{ fontWeight: 'bold' }}>{props.name}</Text>
         </CardItem>
-        <CardItem style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-around' }}>
+        <CardItem
+          style={{
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'space-around',
+          }}
+        >
           <Text>No. of Bodas: 10</Text>
 
           <TouchableOpacity style={{ flexDirection: 'row' }}>
