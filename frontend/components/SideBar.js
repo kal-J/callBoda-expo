@@ -13,36 +13,38 @@ import {
   Body,
 } from 'native-base';
 import { View } from 'react-native';
-const routes = ['Stages', 'Bodas', 'Account'];
-export default class SideBar extends React.Component {
-  render() {
-    return (
-      <Container>
-        <View>
-          <Card>
-            <CardItem>
-              <Body>
-                <Image source={require('../assets/icon.png')} />
-              </Body>
-            </CardItem>
-          </Card>
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
-          <List
-            dataArray={routes}
-            renderRow={(data) => {
-              return (
-                <ListItem
-                  key={`${Math.random() * 9}`}
-                  button
-                  onPress={() => this.props.navigation.navigate(data)}
-                >
-                  <Text>{data}</Text>
-                </ListItem>
-              );
-            }}
-          />
-        </View>
-      </Container>
-    );
-  }
-}
+const SideBar = (props) => {
+  return (
+    <View style={{ flex: 1 }}>
+      <Card>
+        <CardItem>
+          <Body>
+            <Image
+              source={require('../assets/icon.png')}
+              style={{ width: wp(30), height: wp(30) }}
+            />
+          </Body>
+        </CardItem>
+      </Card>
+
+      <List>
+        <ListItem button onPress={() => props.navigation.navigate('Home')}>
+          <Text>Home</Text>
+        </ListItem>
+        <ListItem button onPress={() => props.navigation.navigate('Bodas')}>
+          <Text>Bodas</Text>
+        </ListItem>
+        <ListItem button onPress={() => props.navigation.navigate('Account')}>
+          <Text>Account</Text>
+        </ListItem>
+      </List>
+    </View>
+  );
+};
+
+export default SideBar;
