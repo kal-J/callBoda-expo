@@ -3,17 +3,30 @@ import { View, Picker, StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import colors from '../layouts/colors';
 const Select = (props) => {
-  const { selectedValue, setSelectedValue, items } = props;
+  const {
+    selectedValue,
+    setSelectedValue,
+    previous_state,
+    newValue,
+    items,
+  } = props;
   return (
     <View style={styles.container}>
       <Picker
         selectedValue={selectedValue}
-        style={{width: wp(70) }}
-        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+        style={{ width: wp(70) }}
+        onValueChange={(itemValue, itemIndex) =>
+          setSelectedValue({ ...previous_state, [newValue]: itemValue })
+        }
       >
         {items.map((item, index) => {
           return (
-            <Picker.Item key={index} color={colors.primary} label={item.name} value={item.name} />
+            <Picker.Item
+              key={index}
+              color={colors.primary}
+              label={item.name}
+              value={item.name}
+            />
           );
         })}
       </Picker>

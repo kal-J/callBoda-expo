@@ -7,6 +7,12 @@ import colors from './layouts/colors';
 import { StoreProvider } from './context';
 
 const App = () => {
+  /* TODO
+    * Implement phone authentication
+    * if there is an internet connection, sync local data with cloud data
+    * update local data
+   */
+
   const [isReady, setIsReady] = useState(false);
   useEffect(() => {
     (async function () {

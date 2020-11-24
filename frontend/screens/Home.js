@@ -20,16 +20,16 @@ const Tab = createMaterialTopTabNavigator();
 const Stages = (props) => {
   const { app_state } = useContext(StoreContext);
   const { stages } = app_state;
+
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         data={stages}
+        keyExtractor={(item) => `${item.id}`}
         renderItem={({ item }) => (
           <Stage
-            key={`jhkjjhjjk-${item.id}`}
             name={item.name}
             bodas={item.bodas}
-            id={item.id}
             navigation={props.navigation}
           />
         )}

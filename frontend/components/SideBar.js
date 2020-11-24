@@ -1,21 +1,10 @@
 import React from 'react';
 import { Image } from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  List,
-  ListItem,
-  Card,
-  CardItem,
-  Left,
-  Right,
-  Body,
-} from 'native-base';
+import { Text, List, ListItem, Card, CardItem, Body } from 'native-base';
 import { View } from 'react-native';
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 
 const SideBar = (props) => {
@@ -42,7 +31,36 @@ const SideBar = (props) => {
         <ListItem button onPress={() => props.navigation.navigate('Account')}>
           <Text>Account</Text>
         </ListItem>
+        <ListItem
+          style={{
+            marginTop: hp(5),
+          }}
+          button
+          onPress={() => {}}
+        >
+          <Text>About callBoda</Text>
+        </ListItem>
       </List>
+
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          marginBottom: hp(1),
+        }}
+      >
+        <Text
+          style={{
+            width: '100%',
+            borderTopWidth: 1,
+            paddingVertical: hp(1),
+            paddingHorizontal: wp('20%'),
+          }}
+        >
+          Version 1.0.0
+        </Text>
+      </View>
     </View>
   );
 };

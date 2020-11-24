@@ -26,6 +26,11 @@ export const StoreProvider = ({ children }) => {
               'https://images.unsplash.com/photo-1572316787289-4d87404eea4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60',
           },
         ],
+        top_rated_boda: (() => {
+
+          // return top rated boda object
+          
+        })()
       },
       {
         id: 2,
@@ -95,6 +100,7 @@ export const StoreProvider = ({ children }) => {
       },
     ],
   });
+  
   return (
     <StoreContext.Provider value={{ app_state, setAppState }}>
       {children}

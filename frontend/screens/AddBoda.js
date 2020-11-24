@@ -29,8 +29,8 @@ import { ScrollView } from 'react-native';
 
 const AddBoda = (props) => {
   const { app_state, setAppState } = useContext(StoreContext);
-  const [stage, setStage] = useState('SELECT STAGE');
-  const [photo, setPhoto] = useState(null);
+  const [newBoda, setNewBoda] = useState({});
+  const { stages } = app_state;
 
   const selectPhoto = async () => {
     (async () => {
@@ -56,11 +56,10 @@ const AddBoda = (props) => {
     console.log(result);
 
     if (!result.cancelled) {
-      setPhoto(result);
+      setNewBoda({ ...newBoda, photo: result });
     }
   };
 
-  const { stages } = app_state;
   return (
     <>
       <ScrollView style={{ flex: 1 }}>
@@ -68,22 +67,32 @@ const AddBoda = (props) => {
         <View style={{ flex: 1, paddingHorizontal: wp(10) }}>
           <Form>
             <Item floatingLabel>
-              <Label>Name</Label>
-              <Input />
+              <Label>Enter name</Label>
+              <Input
+                value={newBoda.name || ''}
+                onChangeText={(name) => setNewBoda({ ...newBoda, name })}
+              />
             </Item>
 
             <Item floatingLabel>
               <Label>Telephone Number</Label>
-              <Input />
+              <Input
+                value={newBoda.mobileNo || ''}
+                onChangeText={(mobileNo) =>
+                  setNewBoda({ ...newBoda, mobileNo })
+                }
+              />
             </Item>
 
             <View style={{ flex: 1, paddingTop: hp(3) }}>
               <Label>Select stage the Boda belongs to : </Label>
 
               <Select
-                selectedValue={stage}
-                setSelectedValue={setStage}
+                selectedValue={newBoda.stage}
+                setSelectedValue={setNewBoda}
                 items={stages}
+                previous_state={newBoda}
+                newValue={'stage'}
               />
             </View>
           </Form>
@@ -92,7 +101,7 @@ const AddBoda = (props) => {
         <View
           style={{ flex: 1, paddingHorizontal: wp(10), flexDirection: 'row' }}
         >
-          {photo ? (
+          {newBoda.photo ? (
             <View
               style={{
                 height: hp(16),
@@ -104,7 +113,7 @@ const AddBoda = (props) => {
               }}
             >
               <Image
-                source={{ uri: photo.uri }}
+                source={{ uri: newBoda.photo.uri }}
                 style={{ width: hp(16), height: hp(16), borderRadius: hp(8) }}
               />
             </View>
@@ -140,7 +149,13 @@ const AddBoda = (props) => {
         </View>
         <View style={{ marginHorizontal: wp(10), marginTop: hp(2) }}>
           <Label>Boda's Bio (optional) </Label>
-          <Textarea rowSpan={4} bordered placeholder="About this Boda Guy..." />
+          <Textarea
+            rowSpan={4}
+            bordered
+            placeholder="About this Boda Guy..."
+            value={newBoda.bio || ''}
+            onChangeText={(bio) => setNewBoda({ ...newBoda, bio })}
+          />
         </View>
       </ScrollView>
       <View
@@ -150,7 +165,22 @@ const AddBoda = (props) => {
           marginVertical: hp(5),
         }}
       >
-        <Button full style={{ backgroundColor: colors.primary }}>
+        <Button
+          full
+          style={{ backgroundColor: colors.primary }}
+          onPress={() => {
+            if (newBoda.name === '' || !newBoda.name) {
+              setError('Name is a required field');
+              return;
+            }
+            if (newBoda.mobileNo === '' || !newBoda.mobileNo) {
+              setError('Telephone number is a required field');
+              return;
+            }
+
+            // save newBoda to cloud if there is an internet connection, else save to local storage
+          }}
+        >
           <Text style={{ color: '#fff' }}>ADD BODA</Text>
         </Button>
       </View>
