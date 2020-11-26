@@ -18,14 +18,21 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { FlatList } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+const Tab = createMaterialTopTabNavigator();
 
 const Bodas = (props) => {
-  const stage = props.navigation.getParam('stage') || 'No stage selected';
+  const stageName = props.navigation.getParam('stageName');
   const bodas = props.navigation.getParam('bodas');
   return (
     <>
       <View style={{ flex: 1 }}>
-        <NavHeader navigation={props.navigation} title={stage} />
+        <NavHeader
+          navigation={props.navigation}
+          title={stageName || 'NO STAGE SELECTED'}
+        />
         <View
           style={{
             flex: 1,
@@ -39,16 +46,20 @@ const Bodas = (props) => {
             {bodas ? (
               <FlatList
                 data={bodas}
+                keyExtractor={(item) => `${item.id}`}
                 renderItem={({ item }) => {
                   const boda = item;
                   return (
-                    <Card
-                      key={`'yuuu'-${Math.random() * 9}`}
-                      style={{ paddingVertical: 15 }}
-                    >
+                    <Card style={{ paddingVertical: 15 }}>
                       <CardItem>
-                        <View>
-                          <View style={styles.place_center}>
+                        <View style={{ flex: 1 }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
                             <Text
                               style={{
                                 fontWeight: 'bold',
@@ -59,15 +70,38 @@ const Bodas = (props) => {
                               {boda.name}
                             </Text>
                           </View>
-                          <View style={styles.place_center}>
+                          <View
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
                             <Image
                               style={{
                                 width: 150,
                                 height: 150,
                                 borderRadius: 75,
                               }}
-                              source={{ uri: boda.profile_picture_url }}
+                              source={
+                                boda.photo_url
+                                  ? { uri: boda.photo_url }
+                                  : require('../assets/avatar-placeholder.png')
+                              }
                             />
+                          </View>
+                          <View style={styles.place_center}>
+                            <Text
+                              style={{
+                                color:
+                                  boda.status === 'notVerified'
+                                    ? colors.primary
+                                    : 'blue',
+                                fontSize: 12,
+                                marginTop: hp(1),
+                              }}
+                            >
+                              {boda.status}
+                            </Text>
                           </View>
                           <View style={styles.place_center}>
                             <FiveStarRating rating={boda.rating} />
@@ -91,9 +125,10 @@ const Bodas = (props) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                               onPress={() =>
-                                call({ number: boda.tel, prompt: true }).catch(
-                                  console.error
-                                )
+                                call({
+                                  number: boda.mobileNo,
+                                  prompt: true,
+                                }).catch(console.error)
                               }
                             >
                               <Icon
@@ -108,6 +143,17 @@ const Bodas = (props) => {
                   );
                 }}
               />
+            ) : stageName ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text>Bodas not available for this stage.</Text>
+                <Text>click the '+' button to add a Boda</Text>
+              </View>
             ) : (
               Alert.alert('No stage selected, first select a stage')
             )}

@@ -5,6 +5,8 @@ import colors from '../layouts/colors';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const Stage = (props) => {
+  const { name, bodas, topRatedBodas, status } = props.stage;
+
   return (
     <TouchableOpacity
       style={{ margin: wp(4) }}
@@ -12,15 +14,22 @@ const Stage = (props) => {
         props.navigation.navigate({
           routeName: 'Bodas',
           params: {
-            stage: props.name,
-            bodas: props.bodas,
+            stageName: name,
+            bodas: bodas,
           },
         })
       }
     >
       <Card>
-        <CardItem>
-          <Text style={{ fontWeight: 'bold' }}>{props.name}</Text>
+        <CardItem style={{ justifyContent: 'space-between' }}>
+          <Text style={{ fontWeight: 'bold' }}>{name}</Text>
+          <Text
+            style={{
+              color: status === 'notVerified' ? colors.primary : 'blue',
+            }}
+          >
+            {status}
+          </Text>
         </CardItem>
         <CardItem
           style={{
@@ -29,13 +38,22 @@ const Stage = (props) => {
             justifyContent: 'space-around',
           }}
         >
-          <Text>No. of Bodas: 10</Text>
+          <Text>No. of Bodas: {bodas ? bodas.length : 'Not available'}</Text>
 
           <TouchableOpacity style={{ flexDirection: 'row' }}>
-            <Text>Top rated Boda:</Text>
-            <Text style={{ color: colors.primary, marginLeft: wp(1) }}>
-              Okello
-            </Text>
+            <Text>Top rated Boda(s):</Text>
+            {topRatedBodas
+              ? topRatedBodas.map((boda, index) => {
+                  return (
+                    <Text
+                      key={`${index}`}
+                      style={{ color: colors.primary, marginLeft: wp(1) }}
+                    >
+                      {boda.name}
+                    </Text>
+                  );
+                })
+              : null}
           </TouchableOpacity>
 
           <Text>Stage rating: 5 stars</Text>

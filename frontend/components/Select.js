@@ -1,7 +1,9 @@
+import { Picker } from 'native-base';
 import React from 'react';
-import { View, Picker, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import colors from '../layouts/colors';
+
 const Select = (props) => {
   const {
     selectedValue,
@@ -16,16 +18,19 @@ const Select = (props) => {
         selectedValue={selectedValue}
         style={{ width: wp(70) }}
         onValueChange={(itemValue, itemIndex) =>
-          setSelectedValue({ ...previous_state, [newValue]: itemValue })
+          setSelectedValue({
+            ...previous_state,
+            [newValue]: itemValue,
+          })
         }
       >
         {items.map((item, index) => {
           return (
             <Picker.Item
-              key={index}
+              key={`${index}`}
               color={colors.primary}
               label={item.name}
-              value={item.name}
+              value={item}
             />
           );
         })}

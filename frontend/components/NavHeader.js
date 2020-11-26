@@ -1,8 +1,19 @@
-import React from "react";
-import colors from "../layouts/colors";
-import { Header, Left, Button, Icon, Body, Title,Text,Right } from "native-base";
+import React from 'react';
+import colors from '../layouts/colors';
+import {
+  Header,
+  Left,
+  Button,
+  Icon,
+  Body,
+  Title,
+  Text,
+  Right,
+} from 'native-base';
+import { View } from 'react-native';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
-const NavHeader = props => {
+const NavHeader = (props) => {
   return (
     <Header style={{ backgroundColor: colors.primary }}>
       <Left>
@@ -10,12 +21,17 @@ const NavHeader = props => {
           <Icon name="menu" />
         </Button>
       </Left>
-      <Body>
-        <Text style={{color: '#fff', fontWeight: 'bold'}}>
-          {props.title}
-        </Text>
-      </Body>
-      <Right/>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginLeft: wp(4),
+        }}
+      >
+        <Text style={{ color: '#fff', fontWeight: 'bold' }}>{props.title}</Text>
+      </View>
+
+      <Right />
     </Header>
   );
 };
