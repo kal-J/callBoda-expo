@@ -28,8 +28,8 @@ const SideBar = (props) => {
         <ListItem button onPress={() => props.navigation.navigate('Bodas')}>
           <Text>Bodas</Text>
         </ListItem>
-        <ListItem button onPress={() => props.navigation.navigate('Account')}>
-          <Text>Account</Text>
+        <ListItem button onPress={() => props.navigation.navigate('Dashboard')}>
+          <Text>Dashboard</Text>
         </ListItem>
         <ListItem
           style={{

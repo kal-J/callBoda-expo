@@ -15,7 +15,9 @@ export const StoreProvider = ({ children }) => {
   // get userID
   useEffect(() => {
     getUserUniqueID()
-      .then((userID) => setAppState({ ...app_state, userID }))
+      .then((userID) => {
+        setAppState({ ...app_state, userID });
+      })
       .catch(() => {
         // handle missing userID error
       });
