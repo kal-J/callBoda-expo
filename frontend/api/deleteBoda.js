@@ -44,54 +44,53 @@ const deleteBoda = (boda, stages, app_state, setAppState) => {
   };
 
   return new Promise((resolve, reject) => {
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        firebase
-          .firestore()
-          .collection('stages')
-          .doc('stages')
-          .get()
-          .then((doc) => {
-            if (!doc.exists) {
-              return deleteFromLocalStorage();
-            }
-            const { stages } = doc.data();
-            if (!stages) {
-              return deleteFromLocalStorage();
-            }
-
-            if (!isArray(stages)) {
-              return deleteFromLocalStorage();
-            }
-
-            const cloud_stages = [...stages];
-
-            // check if boda exists
-            const bodaExists = cloud_stages.filter((stage) => {
-              if (stage.id === boda.stage.id) {
-                if (!stage.bodas) {
-                  return false;
-                }
-                if (!isArray(stage.bodas)) {
-                  return false;
-                }
-
-                const boda_in_stage = stage.bodas.filter((c_boda) => {
-                  if (boda.id === c_boda.id) {
-                    return true;
-                  }
-                }).length;
-
-                return boda_in_stage;
+    NetInfo.fetch()
+      .then((state) => {
+        if (state.isConnected) {
+          firebase
+            .firestore()
+            .collection('stages')
+            .doc('stages')
+            .get()
+            .then((doc) => {
+              if (!doc.exists) {
+                return reject('sorry, something went wrong, please try again');
               }
-            }).length;
+              const { stages } = doc.data();
+              if (!stages) {
+                return reject('sorry, something went wrong, please try again');
+              }
 
-            if (!bodaExists) {
-              return deleteFromLocalStorage();
-            }
+              if (!isArray(stages)) {
+                return reject('sorry, something went wrong, please try again');
+              }
 
-            // delete boda
-            deleteFromLocalStorage().then((boda) => {
+              const cloud_stages = [...stages];
+
+              // check if boda exists
+              const bodaExists = cloud_stages.filter((stage) => {
+                if (stage.id === boda.stage.id) {
+                  if (!stage.bodas) {
+                    return false;
+                  }
+                  if (!isArray(stage.bodas)) {
+                    return false;
+                  }
+
+                  const boda_in_stage = stage.bodas.filter((c_boda) => {
+                    if (boda.id === c_boda.id) {
+                      return true;
+                    }
+                  }).length;
+
+                  return boda_in_stage;
+                }
+              }).length;
+
+              if (!bodaExists) {
+                return reject('sorry, something went wrong, please try again');
+              }
+
               // delete from cloud
               [...stages].forEach((stage, index) => {
                 if (stage.id === boda.stage.id) {
@@ -129,24 +128,26 @@ const deleteBoda = (boda, stages, app_state, setAppState) => {
                 .set({
                   stages: [...cloud_stages],
                 })
-                .then(() => {
+                .then(async () => {
+                  await deleteFromLocalStorage();
                   return resolve({ ...boda, status: 'deleted' });
                 })
                 .catch((err) => {
                   return reject();
                 });
+            })
+            .catch(() => {
+              return reject('sorry, something went wrong, please try again');
             });
-          });
-      }
-
-      deleteFromLocalStorage()
-        .then(() => {
-          return resolve({ ...boda, status: 'deleted' });
-        })
-        .catch((err) => {
-          return reject();
-        });
-    });
+        } else {
+          return reject(
+            'No internet connection. You need an internet connection to delete a boda'
+          );
+        }
+      })
+      .catch(() => {
+        return reject('sorry, something went wrong, please try again');
+      });
   });
 };
 

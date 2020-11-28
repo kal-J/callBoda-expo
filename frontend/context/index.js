@@ -2,7 +2,7 @@ import React, { useState, createContext, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import getBodaStages from '../api/getBodaStages';
 import getUserUniqueID from '../api/getUserUniqueID';
-import { isEqual } from 'lodash';
+import { isArray, isEqual } from 'lodash';
 
 export const StoreContext = createContext();
 
@@ -11,6 +11,20 @@ export const StoreProvider = ({ children }) => {
     stages: [],
     userID: null,
   });
+
+  // remove bodas and stages with deleted status
+ /*  useEffect(() => {
+    const stagesNotDeleted = app_state.stages.filter(stage => stage.status !== 'deleted');
+
+    [...stagesNotDeleted].forEach((stage, index) => {
+      let bodas = stage.bodas;
+      if(isArray(bodas)) {
+        const bodasNotDeleted = bodas.filter(boda => boda.status !== 'deleted');
+        stagesNotDeleted[index].bodas = bodasNotDeleted;
+      }
+    });
+    setAppState({...app_state, stages: stagesNotDeleted});
+  }, [app_state,setAppState]) */
 
   // get userID
   useEffect(() => {

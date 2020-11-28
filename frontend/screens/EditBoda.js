@@ -266,7 +266,7 @@ const EditBoda = (props) => {
               }
             });
 
-            editBoda(newBoda, stages)
+            editBoda(newBoda)
               .then(() => {
                 // handle edit success
                 props.navigation.navigate('Dashboard');

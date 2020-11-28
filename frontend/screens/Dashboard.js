@@ -203,8 +203,8 @@ const DisplayBodas = (props) => {
                         onPress={() => {
                           deleteBoda(boda, stages, app_state, setAppState)
                             .then(() => {})
-                            .catch(() => {
-                              Alert.alert(null, 'Boda could not be deleted', {
+                            .catch((error) => {
+                              Alert.alert(null, error, {
                                 cancelable: true,
                               });
                             });
