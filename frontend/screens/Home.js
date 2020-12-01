@@ -58,6 +58,7 @@ const Map_stages = (props) => {
 const Home = (props) => {
   const { app_state, setAppState } = useContext(StoreContext);
   const [error, setError] = useState(null);
+  const [onload, setOnload] = useState(false);
 
   // listen for any updates to cloud storage and update local storage
   useEffect(() => {
@@ -94,7 +95,9 @@ const Home = (props) => {
     return unsubscribe();
   }, []);
 
-  
+  useEffect(() => {
+    setOnload(true);
+  }, []);
 
   if (error) {
     return (
@@ -122,6 +125,23 @@ const Home = (props) => {
 
   return (
     <Container>
+      {onload &&
+        Alert.alert(
+          null,
+          `This is an alpha version of this App and so only Boda stages around Lira University are supported. More Areas will be supported in future releases`,
+          [
+            null,
+            null,
+            {
+              text: 'ok',
+              onPress: () => {
+                setOnload(false);
+              },
+            },
+          ],
+          { cancelable: true }
+        )}
+
       <NavHeader navigation={props.navigation} title="SELECT STAGE" />
       <View style={{ backgroundColor: colors.primary }}>
         <Header searchBar rounded style={{ backgroundColor: colors.primary }}>
