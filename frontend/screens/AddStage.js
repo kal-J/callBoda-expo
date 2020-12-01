@@ -44,7 +44,27 @@ const AddStage = (props) => {
   const [error, setError] = useState(null);
 
   if (error) {
-    return <Error setError={setError} message={error} />;
+    return (
+      <View>
+        {Alert.alert(
+          null,
+          error,
+          [
+            null,
+            null,
+            {
+              text: 'OK',
+              onPress: () => {
+                setError(null);
+              },
+            },
+          ],
+          {
+            cancelable: true,
+          }
+        )}
+      </View>
+    );
   }
 
   return (

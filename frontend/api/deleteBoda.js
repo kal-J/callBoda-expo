@@ -1,47 +1,8 @@
 import firebase from '../firebase';
 import NetInfo from '@react-native-community/netinfo';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isArray } from 'lodash';
 
-const deleteBoda = (boda, stages, app_state, setAppState) => {
-  const deleteFromLocalStorage = () => {
-    return new Promise((resolve, reject) => {
-      stages = stages || [];
-
-      [...stages].forEach((stage, index) => {
-        if (stage.id === boda.stage.id) {
-          const oldStage = stage;
-          stages[index] = {
-            ...oldStage,
-            get bodas() {
-              if (oldStage.bodas) {
-                // mutate old boda
-                let o_stage_bodas = [...oldStage.bodas];
-
-                oldStage.bodas.forEach((oldBoda, index) => {
-                  if (oldBoda.id === boda.id) {
-                    o_stage_bodas[index] = { ...boda, status: 'deleted' };
-                  }
-                });
-
-                return [...o_stage_bodas];
-              }
-
-              return [{ ...boda, status: 'deleted' }];
-            },
-          };
-        }
-      });
-
-      const jsonValue = JSON.stringify(stages);
-      AsyncStorage.setItem('stages', jsonValue)
-        .then(() => {
-          setAppState({ ...app_state, stages: stages });
-          return resolve(boda);
-        })
-        .catch(() => reject('Failed to save boda - #1'));
-    });
-  };
+const deleteBoda = (boda) => {
 
   return new Promise((resolve, reject) => {
     NetInfo.fetch()
@@ -104,17 +65,14 @@ const deleteBoda = (boda, stages, app_state, setAppState) => {
 
                         oldStage.bodas.forEach((oldBoda, index) => {
                           if (oldBoda.id === boda.id) {
-                            o_stage_bodas[index] = {
-                              ...boda,
-                              status: 'deleted',
-                            };
+                            o_stage_bodas.splice(index, 1);
                           }
                         });
 
                         return [...o_stage_bodas];
                       }
 
-                      return [{ ...boda, status: 'deleted' }];
+                      return [];
                     },
                   };
                 }
@@ -128,12 +86,11 @@ const deleteBoda = (boda, stages, app_state, setAppState) => {
                 .set({
                   stages: [...cloud_stages],
                 })
-                .then(async () => {
-                  await deleteFromLocalStorage();
-                  return resolve({ ...boda, status: 'deleted' });
+                .then( () => {
+                  return resolve();
                 })
                 .catch((err) => {
-                  return reject();
+                  return reject('sorry, something went wrong, please try again');
                 });
             })
             .catch(() => {

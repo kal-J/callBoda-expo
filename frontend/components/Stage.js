@@ -21,11 +21,12 @@ const Stage = (props) => {
       }
     >
       <Card>
-        <CardItem style={{ justifyContent: 'space-between' }}>
-          <Text style={{ fontWeight: 'bold' }}>{name}</Text>
+        <CardItem style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <Text style={{ fontWeight: 'bold', flex: 1 }}>{name}</Text>
           <Text
             style={{
               color: status === 'notVerified' ? colors.primary : 'blue',
+              fontSize: 12
             }}
           >
             {status}
@@ -56,7 +57,7 @@ const Stage = (props) => {
               : null}
           </TouchableOpacity>
 
-          <Text>Stage rating: 5 stars</Text>
+          <Text>Stage rating: Not Available</Text>
         </CardItem>
       </Card>
     </TouchableOpacity>

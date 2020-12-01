@@ -16,7 +16,7 @@ import {
   Picker,
 } from 'native-base';
 import NavHeader from '../components/NavHeader';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import colors from '../layouts/colors';
 import { Text } from 'react-native';
 import { StoreContext } from '../context';
@@ -27,9 +27,7 @@ import { Image } from 'react-native';
 import { ScrollView } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import firebase from '../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Error from '../components/Error';
-
+import { isArray } from 'lodash';
 const AddBoda = (props) => {
   const { app_state, setAppState } = useContext(StoreContext);
   const [newBoda, setNewBoda] = useState({
@@ -77,11 +75,28 @@ const AddBoda = (props) => {
   };
 
   if (error) {
-    return <Error setError={setError} message={error} />;
+    return (
+      <View>
+        {Alert.alert(
+          null,
+          error,
+          [
+            null,
+            null,
+            {
+              text: 'OK',
+              onPress: () => {
+                setError(null);
+              },
+            },
+          ],
+          {
+            cancelable: true,
+          }
+        )}
+      </View>
+    );
   }
-
- 
-  
 
   const Select = () => {
     return (
@@ -259,54 +274,7 @@ const AddBoda = (props) => {
               }
             }
 
-            // save newBoda to cloud if there is an internet connection, else save to local storage
-
-            const saveToLocalStorage = () => {
-              try {
-                let stages = app_state.stages || [];
-
-                stages.forEach((stage, index) => {
-                  if (stage.id === newBoda.stage.id) {
-                    const oldStage = stage;
-                    stages[index] = {
-                      ...oldStage,
-                      get bodas() {
-                        if (oldStage.bodas) {
-                          return [...oldStage.bodas, newBoda];
-                        }
-
-                        return [newBoda];
-                      },
-                    };
-                  }
-                });
-
-                const jsonValue = JSON.stringify(stages);
-                AsyncStorage.setItem('stages', jsonValue)
-                  .then(() => {
-                    setAppState({
-                      ...app_state,
-                      stages: stages,
-                    });
-                    setNewBoda({
-                      stage: null,
-                      rating: 1,
-                      status: 'notVerified',
-                      createdBy: app_state.userID,
-                      get id() {
-                        if (this.mobileNo) {
-                          return this.mobileNo;
-                        }
-                        return Math.random() * 9;
-                      },
-                    });
-                    props.navigation.navigate('Home');
-                  })
-                  .catch(() => setError('saving new boda failed, try again'));
-              } catch (e) {
-                setError('saving new Boda failed, try again');
-              }
-            };
+            // save newBoda to cloud if there is an internet connection
 
             NetInfo.fetch().then((state) => {
               if (state.isConnected) {
@@ -327,7 +295,7 @@ const AddBoda = (props) => {
                         ).length;
                         if (!isStageSavedToCloud) {
                           setError(
-                            'There has been an error with saving your boda'
+                            'There has been an error with saving your boda -1'
                           );
                           return;
                         }
@@ -382,7 +350,7 @@ const AddBoda = (props) => {
                         const uploadPhoto = () => {
                           return new Promise((resolve, reject) => {
                             if (!newBoda.local_photo) {
-                              reject();
+                              return reject();
                             }
                             (() => {
                               try {
@@ -399,7 +367,8 @@ const AddBoda = (props) => {
                                       });
                                       return resolve(true);
                                     });
-                                  });
+                                  })
+                                  .catch((error) => reject());
                               } catch (error) {
                                 return reject(error);
                               }
@@ -439,11 +408,10 @@ const AddBoda = (props) => {
                   })
                   .catch((error) => {
                     // if error , save to local storage
-                    saveToLocalStorage();
+                    return setError(error.message);
                   });
               } else {
-                // save to local storage
-                saveToLocalStorage();
+                setError('No internet connection');
               }
             });
           }}

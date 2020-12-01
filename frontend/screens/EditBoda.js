@@ -16,7 +16,7 @@ import {
   Picker,
 } from 'native-base';
 import NavHeader from '../components/NavHeader';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import colors from '../layouts/colors';
 import { Text } from 'react-native';
 import { StoreContext } from '../context';
@@ -29,13 +29,15 @@ import NetInfo from '@react-native-community/netinfo';
 import firebase from '../firebase';
 import Error from '../components/Error';
 import editBoda from '../api/editBoda';
+import IsLoading from '../components/IsLoading';
 
 const EditBoda = (props) => {
   // get boda to edit
   const boda = props.navigation.getParam('boda');
-  const { app_state, setAppState } = useContext(StoreContext);
+  const { app_state } = useContext(StoreContext);
   const [newBoda, setNewBoda] = useState({});
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { stages } = app_state;
 
   useEffect(() => {
@@ -73,7 +75,27 @@ const EditBoda = (props) => {
   };
 
   if (error) {
-    return <Error setError={setError} message={error} />;
+    return (
+      <View>
+        {Alert.alert(
+          null,
+          error,
+          [
+            null,
+            null,
+            {
+              text: 'OK',
+              onPress: () => {
+                setError(null);
+              },
+            },
+          ],
+          {
+            cancelable: true,
+          }
+        )}
+      </View>
+    );
   }
 
   const Select = () => {
@@ -118,6 +140,7 @@ const EditBoda = (props) => {
 
   return (
     <>
+      {loading && <IsLoading />}
       <ScrollView style={{ flex: 1 }}>
         <NavHeader navigation={props.navigation} title="EDIT BODA" />
         <View style={{ flex: 1, paddingHorizontal: wp(10) }}>
@@ -228,6 +251,7 @@ const EditBoda = (props) => {
             }
 
             // save photo if internet connection
+            setLoading(true);
             NetInfo.fetch().then((state) => {
               if (state.isConnected) {
                 // upload image if selected
@@ -263,15 +287,27 @@ const EditBoda = (props) => {
                 (async () => {
                   await uploadPhoto();
                 })();
+              } else {
+                setLoading(false);
+                return Alert.alert(
+                  null,
+                  'Error, No internet connection',
+                  null,
+                  {
+                    cancelable: true,
+                  }
+                );
               }
             });
 
             editBoda(newBoda)
               .then(() => {
                 // handle edit success
+                setLoading(false);
                 props.navigation.navigate('Dashboard');
               })
               .catch((error) => {
+                setLoading(false);
                 setError(error);
               });
           }}

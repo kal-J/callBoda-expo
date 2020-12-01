@@ -12,20 +12,6 @@ export const StoreProvider = ({ children }) => {
     userID: null,
   });
 
-  // remove bodas and stages with deleted status
- /*  useEffect(() => {
-    const stagesNotDeleted = app_state.stages.filter(stage => stage.status !== 'deleted');
-
-    [...stagesNotDeleted].forEach((stage, index) => {
-      let bodas = stage.bodas;
-      if(isArray(bodas)) {
-        const bodasNotDeleted = bodas.filter(boda => boda.status !== 'deleted');
-        stagesNotDeleted[index].bodas = bodasNotDeleted;
-      }
-    });
-    setAppState({...app_state, stages: stagesNotDeleted});
-  }, [app_state,setAppState]) */
-
   // get userID
   useEffect(() => {
     getUserUniqueID()
@@ -40,9 +26,8 @@ export const StoreProvider = ({ children }) => {
   // fetch stages from cloud or local storage depending on internet connection
   useEffect(() => {
     // #1. get stages from local storage
-    let local_store_stages = [];
-    let cloud_store_stages = [];
-    let synced_stages = [];
+    let local_store_stages = null;
+    let cloud_store_stages = null;
 
     getBodaStages
       .localStorage()
@@ -68,24 +53,10 @@ export const StoreProvider = ({ children }) => {
         // do spmething ;)
       });
 
-    // #3 sync cloud && local stage data
-    // ======================================================
-
-    synced_stages = [
-      ...cloud_store_stages,
-      ...local_store_stages.filter((l_stage) => {
-        const l_in_c = cloud_store_stages.filter(
-          (c_stage) => c_stage.id === l_stage.id
-        ).length;
-        if (l_in_c) {
-          return false;
-        }
-        return true;
-      }),
-    ];
-
-    if (!isEqual(app_state.stages, synced_stages)) {
-      setAppState({ ...app_state, stages: synced_stages });
+    if (!cloud_store_stages) {
+      setAppState({ ...app_state, stages: local_store_stages });
+    } else {
+      setAppState({ ...app_state, stages: cloud_store_stages });
     }
   }, []);
 

@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { StoreContext } from '../context';
+import NetInfo from '@react-native-community/netinfo';
 import {
   Alert,
   View,
@@ -201,12 +202,36 @@ const DisplayBodas = (props) => {
                     >
                       <TouchableOpacity
                         onPress={() => {
-                          deleteBoda(boda, stages, app_state, setAppState)
-                            .then(() => {})
-                            .catch((error) => {
-                              Alert.alert(null, error, {
-                                cancelable: true,
-                              });
+                          NetInfo.fetch()
+                            .then((state) => {
+                              if (state.isConnected) {
+                                deleteBoda(boda)
+                                  .then(() => {})
+                                  .catch((error) => {
+                                    Alert.alert(null, error, {
+                                      cancelable: true,
+                                    });
+                                  });
+                              } else {
+                                Alert.alert(
+                                  null,
+                                  'Error, No internet connection',
+                                  null,
+                                  {
+                                    cancelable: true,
+                                  }
+                                );
+                              }
+                            })
+                            .catch(() => {
+                              Alert.alert(
+                                null,
+                                'Error, No internet connection',
+                                null,
+                                {
+                                  cancelable: true,
+                                }
+                              );
                             });
                         }}
                       >
@@ -225,56 +250,6 @@ const DisplayBodas = (props) => {
       </View>
 
       <BottomActionBtn navigation={props.navigation} />
-    </>
-  );
-};
-
-const DisplayStages = (props) => {
-  return (
-    <>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>My Stages</Text>
-      </View>
-
-      <View
-        style={{
-          paddingVertical: hp(2),
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#fff',
-          elevation: 5,
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: colors.primary,
-            width: wp(14),
-            height: wp(14),
-            borderRadius: wp(7),
-            elevation: 5,
-          }}
-          onPress={() => {
-            Alert.alert(
-              null,
-              "Click 'New stage' to create and save a new stage",
-              [
-                {
-                  text: 'NEW STAGE',
-                  onPress: () => {
-                    props.navigation.navigate('AddStage');
-                  },
-                },
-                null,
-              ],
-              { cancelable: true }
-            );
-          }}
-        >
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>+</Text>
-        </TouchableOpacity>
-      </View>
     </>
   );
 };
@@ -337,15 +312,6 @@ const Dashboard = (props) => {
                 stages={stages}
                 app_state={app_state}
                 setAppState={setAppState}
-                navigation={props.navigation}
-              />
-            )}
-          />
-          <Tab.Screen
-            name="MY STAGES"
-            children={() => (
-              <DisplayStages
-                stages={userStages}
                 navigation={props.navigation}
               />
             )}

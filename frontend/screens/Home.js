@@ -16,7 +16,6 @@ import { TouchableOpacity } from 'react-native';
 import { Text } from 'react-native';
 import { StoreContext } from '../context';
 import { Alert } from 'react-native';
-import Error from '../components/Error';
 import { isEqual, isArray } from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -74,53 +73,17 @@ const Home = (props) => {
               if (isArray(stages)) {
                 if (stages.length) {
                   // get stages not yet uploaded
-                  const stagesNotUploaded = app_state.stages.filter(
-                    (local_stage) => {
-                      const exists = stages.filter(
-                        (cloud_stage) => local_stage.id === cloud_stage.id
-                      ).length;
-                      if (exists) {
-                        return false;
-                      } else {
-                        return true;
-                      }
-                    }
-                  );
+                  (async () => {
+                    await AsyncStorage.setItem(
+                      'stages',
+                      JSON.stringify(stages)
+                    );
+                  })();
 
                   setAppState({
                     ...app_state,
-                    stages: [...stages, ...stagesNotUploaded],
+                    stages: stages,
                   });
-
-                  // update cloud storage if some stages are not uploaded yet
-                  if (stagesNotUploaded.length) {
-                    (() => {
-                      try {
-                        firebase
-                          .firestore()
-                          .collection('stages')
-                          .doc('stages')
-                          .set({
-                            stages: [...stages, ...stagesNotUploaded],
-                          });
-                      } catch (error) {}
-                    })();
-                  }
-
-                  // upate local storage
-                  (async () => {
-                    try {
-                      const jsonValue = JSON.stringify([
-                        ...stages,
-                        ...stagesNotUploaded,
-                      ]);
-                      await AsyncStorage.setItem('stages', jsonValue);
-                    } catch (e) {
-                      setError(
-                        'something went wrong while updating stages info'
-                      );
-                    }
-                  })();
                 }
               }
             }
@@ -131,99 +94,30 @@ const Home = (props) => {
     return unsubscribe();
   }, []);
 
-  useEffect(() => {
-    let local_store_stages = [];
-    let cloud_stages = [];
-
-    // fetch stages from local storage
-
-    (async () => {
-      try {
-        let stages = await AsyncStorage.getItem('stages');
-        if (stages !== null) {
-          stages = JSON.parse(stages);
-          if (isArray(stages)) {
-            if (stages.length) {
-              local_store_stages = [...stages];
-
-              if (!isEqual(stages, app_state.stages)) {
-                setAppState({ ...app_state, stages });
-              }
-            }
-          }
-        }
-      } catch (e) {
-        setError('something went wrong, loading app data!');
-      }
-    })();
-
-    // if there is an internet connection, sync cloud && local store
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        firebase
-          .firestore()
-          .collection('stages')
-          .get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              if (doc.exists) {
-                // check if doc has an object with stages array
-                const { stages } = doc.data();
-                if (isArray(stages)) {
-                  if (stages.length) {
-                    cloud_stages = [...stages];
-                  }
-                }
-              }
-            });
-
-            // compare stages in local storage with ones in the cloud and sync local && cloud
-            let stagesNotUploaded = [];
-            if (local_store_stages.length) {
-              stagesNotUploaded = local_store_stages.filter((local_stage) => {
-                // check if stage is saved to cloud db
-                const isSaved = cloud_stages.filter((cloud_stage) =>
-                  isEqual(cloud_stage, local_stage)
-                ).length;
-
-                if (isSaved) {
-                  return false;
-                } else {
-                  return true;
-                }
-              });
-            }
-
-            // sync stages
-            const syncedStages = [...cloud_stages, ...stagesNotUploaded];
-
-            // update local storage with synced stages
-
-            (async () => {
-              try {
-                const jsonValue = JSON.stringify(syncedStages);
-                await AsyncStorage.setItem('stages', jsonValue);
-              } catch (e) {
-                setError('something went wrong while updating stages info');
-              }
-            })();
-
-            // update app state with synced stages
-            if (!isEqual(app_state.stages, syncedStages)) {
-              setAppState({ ...app_state, stages: syncedStages });
-            }
-
-            // update cloud storage with synced stages
-            firebase.firestore().collection('stages').doc('stages').set({
-              stages: syncedStages,
-            });
-          });
-      }
-    });
-  }, []);
+  
 
   if (error) {
-    return <Error setError={setError} message={error} />;
+    return (
+      <View>
+        {Alert.alert(
+          null,
+          error,
+          [
+            null,
+            null,
+            {
+              text: 'OK',
+              onPress: () => {
+                setError(null);
+              },
+            },
+          ],
+          {
+            cancelable: true,
+          }
+        )}
+      </View>
+    );
   }
 
   return (
@@ -285,21 +179,16 @@ const Home = (props) => {
           onPress={() => {
             Alert.alert(
               null,
-              'Add a new stage or boda',
+              'Add a New Boda ?',
               [
+                null,
+                null,
                 {
-                  text: 'NEW STAGE',
-                  onPress: () => {
-                    props.navigation.navigate('AddStage');
-                  },
-                },
-                {
-                  text: 'NEW BODA',
+                  text: 'CONTINUE',
                   onPress: () => {
                     props.navigation.navigate('AddBoda');
                   },
                 },
-                null,
               ],
               { cancelable: true }
             );
