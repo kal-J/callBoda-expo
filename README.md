@@ -14,6 +14,12 @@ access to Boda-Bodas around them.
 * Search **Boda stages**
 * **Boda** and **Boda Stage** Ratings.
 
+## Screenshots.
+<div>
+     <img src="./Screenshot_2020-12-11-00-53-31.png" width="40%" height="auto" alt="List of Boda stages screen" >
+     <img src="./Screenshot_2020-12-11-00-54-03.png" width="40%" height="auto" alt="Side menu screen" >
+</div>
+
 ## How It Works
  Depending on one's location, one is able to access and make calls to Boda Bodas from stages nearest to them.
 .
